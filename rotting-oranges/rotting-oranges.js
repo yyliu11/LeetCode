@@ -3,51 +3,58 @@
  * @return {number}
  */
 var orangesRotting = function(grid) {
-    let fresh = 0;
-    let minutes = 0;
-    
-    const queue = [];
-    
-    for (let i = 0; i < grid.length; ++i) {
-        for (let j = 0; j < grid[i].length; ++j) {
-            if (grid[i][j] === 2) {
-                queue.push([0,i,j]);
+    let queue = [];
+    let count = 0;
+    let time = 0;
+    for(let i = 0; i < grid.length; i++){
+        for(let j = 0; j < grid[i].length; j++){
+            if(grid[i][j] === 2){
+                queue.push([i,j]);
             }
-            if (grid[i][j] === 1) {
-                ++fresh;
-            }
+            if(grid[i][j] === 1){ count++; }
         }
     }
+  
+    if(!count){ return 0; }
+     time++;
     
-    const mark = (i,j) => {
-        grid[i][j] = 2;
-    }
-    
-    while (queue.length) {
-        const [level,i,j] = queue.pop();
-        
-        if (grid[i-1] && grid[i-1][j] === 1) {
-            mark(i-1, j);
-            queue.unshift([level+1,i-1, j]);
-            --fresh;
+      let temp = [];
+    while(queue.length){
+        let rotten = queue[0];
+       
+       
+        let up = rotten[0] - 1;
+        let down = rotten[0] + 1;
+        let left = rotten[1] - 1;
+        let right = rotten[1] + 1;
+        if(up >= 0 && grid[up][rotten[1]] === 1){
+            grid[up][rotten[1]] = 2;
+            count--;
+            temp.push([up,rotten[1]])
         }
-        if (grid[i+1] && grid[i+1][j] === 1) {
-            mark(i+1, j);
-            queue.unshift([level+1,i+1, j]);
-            --fresh;
+        if(down < grid.length && grid[down][rotten[1]] === 1){
+            grid[down][rotten[1]] = 2;
+            count--;
+            temp.push([down,rotten[1]])
         }
-        if (grid[i][j-1] === 1) {
-            mark(i, j-1);
-            queue.unshift([level+1,i, j-1]);
-            --fresh;
+        if(left >= 0 && grid[rotten[0]][left] === 1){
+            grid[rotten[0]][left] = 2;
+            count--;
+            temp.push([rotten[0],left])
         }
-        if (grid[i][j+1] === 1) {
-            mark(i, j+1);
-            queue.unshift([level+1,i, j+1]);
-            --fresh;
+        if(right < grid[0].length && grid[rotten[0]][right] === 1){
+            grid[rotten[0]][right] = 2;
+            count--;
+            temp.push([rotten[0],right]);
         }
-        if (queue.length && queue[queue.length-1][0] > level) ++minutes;
-    }
-    
-    return fresh > 0 ? -1 : minutes;
+  
+        if(!count){ return time; }
+        queue.shift();
+        if(!queue.length){
+            queue = temp;
+            temp = [];
+            time++
+        } 
+    } 
+    return -1;
 };
