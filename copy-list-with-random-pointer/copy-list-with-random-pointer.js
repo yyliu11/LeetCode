@@ -11,14 +11,22 @@
  * @param {Node} head
  * @return {Node}
  */
-var copyRandomList = function(head, map = new Map) {
-    if(!head){ return head; }
-    if(map.has(head)){ return map.get(head); }
-    
-    let newNode = new Node(head.val);
-    map.set(head, newNode);
-    newNode.next = copyRandomList(head.next, map);
-    newNode.random = copyRandomList(head.random, map)
-;
-    return newNode;
+var copyRandomList = function(head) {
+    if(!head){ return null; }
+    let map = new Map();
+    let curNode = head;
+    while(curNode){
+        let newNode = new Node(curNode.val);
+        map.set(curNode, newNode);
+        curNode = curNode.next;
+    }
+    curNode = head;
+    while(curNode){
+        if(!curNode.next){ map.get(curNode).next = null; }else{
+            map.get(curNode).next = map.get(curNode.next);
+        }       
+        map.get(curNode).random = map.get(curNode.random);
+        curNode = curNode.next;
+    }
+    return map.get(head);
 };
