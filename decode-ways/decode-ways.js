@@ -2,35 +2,22 @@
  * @param {string} s
  * @return {number}
  */
-function DecodeWays(s) {
-    this.str = s;
-    this.cache = {};
-}
-
-DecodeWays.prototype.getNumber = function(s) {
-    if (s === '') {
-        return 1;
-    }
-    
-    if (s in this.cache) {
-        return this.cache[s];
-    }
-    
-    if (s.charAt(0) == '0') {
-        return 0;
-    }
-    
-    
-    let result = this.getNumber(s.substring(1));
-    if (s.length >= 2 && parseInt(s.substring(0,2)) <= 26) {
-        result += this.getNumber(s.substring(2));
-    }
-                                                                                                         this.cache[s] = result;
-    
-    return result;
-}
-
 var numDecodings = function(s) {
-    let decoder = new DecodeWays(s);
-    return decoder.getNumber(decoder.str);
+    let dp = new Array(s.length + 1);
+    dp[0] = 1;
+    if(s[0] === '0'){ return 0; }else{ dp[1] = 1}
+    for(let i = 2; i <= s.length; i++){
+        if(s[i-1] === '0'){
+            if(s[i - 2] === '1' || s[i - 2] === '2'){
+                dp[i] = dp[i-2]
+            }else{ return 0 }
+        }
+        else if(s[i - 2] === '1' || s[i - 2] === '2' && Number(s[i - 1]) < 7){
+            dp[i] = dp[i-1] + dp[i-2]
+        }
+        else{
+            dp[i] = dp[i-1]
+        }
+    }
+    return dp[dp.length - 1]
 };
